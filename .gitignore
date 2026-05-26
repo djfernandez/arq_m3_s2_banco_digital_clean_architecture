@@ -9,6 +9,9 @@ dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
 .mvn/wrapper/maven-wrapper.jar
+!.mvn/wrapper/maven-wrapper.properties
+!mvnw
+!mvnw.cmd
 
 # IntelliJ IDEA
 .idea/
@@ -20,6 +23,12 @@ buildNumber.properties
 .classpath
 .project
 .settings/
+.factorypath
+
+# Java
+*.class
+out/
+bin/
 
 # VS Code
 .vscode/
@@ -35,4 +44,9 @@ application-local.yml
 application-local.properties
 
 # H2 Database
-*.db
+*.mv.db
+*.trace.db
+*.h2.db
+
+# Windows
+Thumbs.db
