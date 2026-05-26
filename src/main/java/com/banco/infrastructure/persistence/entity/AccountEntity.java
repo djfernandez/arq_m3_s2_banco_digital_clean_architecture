@@ -1,5 +1,6 @@
 package com.banco.infrastructure.persistence.entity;
 
+import com.banco.domain.model.AccountStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,6 +13,7 @@ import java.math.BigDecimal;
  * JPA ENTITY (tabla de BD)
  * 
  * Usando Lombok:
+ * 
  * @Data: Genera getters, setters, equals, hashCode, toString
  * @Builder: Patrón Builder
  * @NoArgsConstructor: Constructor vacío para JPA
@@ -24,24 +26,24 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AccountEntity {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @Column(unique = true, nullable = false)
     private String accountNumber;
-    
+
     @Column(nullable = false)
     private String holderName;
-    
+
     @Column(nullable = false)
     private BigDecimal balanceAmount;
-    
+
     @Column(nullable = false)
     private String balanceCurrency;
-    
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String status;
+    private AccountStatus status;
 }

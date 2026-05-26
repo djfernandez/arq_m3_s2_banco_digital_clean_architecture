@@ -14,8 +14,8 @@ import java.math.BigDecimal;
  * MapStruct genera automáticamente la implementación en tiempo de compilación.
  * 
  * @Mapper: Indica que es un mapper de MapStruct
- * componentModel = "spring": Registra el mapper como un bean de Spring
- * injectionStrategy = CONSTRUCTOR: Usa inyección por constructor
+ *          componentModel = "spring": Registra el mapper como un bean de Spring
+ *          injectionStrategy = CONSTRUCTOR: Usa inyección por constructor
  */
 @Mapper(componentModel = "spring")
 public interface AccountMapper {
@@ -23,7 +23,7 @@ public interface AccountMapper {
     // toEntity() funciona normal (AccountEntity SÍ tiene setters)
     @Mapping(target = "balanceAmount", expression = "java(account.getBalance().getAmount())")
     @Mapping(target = "balanceCurrency", expression = "java(account.getBalance().getCurrency())")
-    @Mapping(target = "status", expression = "java(account.getStatus().name())")
+    @Mapping(target = "status", expression = "java(account.getStatus())")
     AccountEntity toEntity(BankAccount account);
 
     // toDomain() usa método default que llama al constructor ✅
@@ -34,10 +34,9 @@ public interface AccountMapper {
 
         Money balance = Money.of(
                 entity.getBalanceAmount(),
-                entity.getBalanceCurrency()
-        );
+                entity.getBalanceCurrency());
 
-        AccountStatus status = AccountStatus.valueOf(entity.getStatus());
+        AccountStatus status = entity.getStatus();
 
         // Usa el constructor en lugar de setters
         return new BankAccount(
@@ -45,7 +44,6 @@ public interface AccountMapper {
                 entity.getAccountNumber(),
                 entity.getHolderName(),
                 balance,
-                status
-        );
+                status);
     }
 }
