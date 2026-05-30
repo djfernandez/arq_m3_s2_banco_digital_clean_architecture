@@ -1,6 +1,7 @@
 package com.gimnasio.banco.infrastructure.persistence.adapter;
 
-import lombok.RequiredArgsConstructor;
+import java.util.Optional;
+
 import org.springframework.stereotype.Component;
 
 import com.gimnasio.banco.domain.model.BankAccount;
@@ -9,7 +10,7 @@ import com.gimnasio.banco.infrastructure.persistence.entity.AccountEntity;
 import com.gimnasio.banco.infrastructure.persistence.mapper.AccountMapper;
 import com.gimnasio.banco.infrastructure.persistence.repository.JpaAccountRepository;
 
-import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 
 /**
  * ADAPTER: Implementa AccountRepository usando JPA

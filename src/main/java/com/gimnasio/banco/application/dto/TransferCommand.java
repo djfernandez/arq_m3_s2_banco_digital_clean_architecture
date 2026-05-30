@@ -1,9 +1,9 @@
 package com.gimnasio.banco.application.dto;
 
+import java.math.BigDecimal;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.math.BigDecimal;
 
 /**
  * COMMAND: Datos de entrada para transferencia

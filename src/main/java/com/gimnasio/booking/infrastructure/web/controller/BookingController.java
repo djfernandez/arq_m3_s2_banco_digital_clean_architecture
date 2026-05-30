@@ -1,7 +1,10 @@
 package com.gimnasio.booking.infrastructure.web.controller;
 
+import java.text.Normalizer;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
@@ -15,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gimnasio.booking.application.dto.ClaseCommand;
+import com.gimnasio.booking.application.dto.CrearClaseCommand;
 import com.gimnasio.booking.application.usecase.CancelarReservaUseCase;
 import com.gimnasio.booking.application.usecase.CrearClaseUseCase;
 import com.gimnasio.booking.application.usecase.RegistrarInasistenciaUseCase;
@@ -58,16 +63,17 @@ public class BookingController {
 
     @PostMapping("/api/clases")
     public ResponseEntity<Map<String, Object>> crearClase(@Valid @RequestBody ClaseRequest req) {
-        Horario.Turno turno = Horario.Turno.valueOf(req.getTurno().toUpperCase());
+        Horario.Turno turno = parseTurno(req.getTurno());
         Horario horario = new Horario(req.getHoraInicio(), req.getHoraFin(), turno);
-
-        ClaseGrupal clase = crearClaseUseCase.execute(
+        CrearClaseCommand command = new CrearClaseCommand(
                 req.getNombre(), req.getInstructor(), horario, req.getFecha(), req.getCapacidad());
+
+        ClaseGrupal clase = crearClaseUseCase.execute(command);
         return ResponseEntity.status(HttpStatus.CREATED).body(claseToMap(clase));
     }
 
     @GetMapping("/api/clases")
-    public ResponseEntity<?> listarClases() {
+    public ResponseEntity<List<Map<String, Object>>> listarClases() {
         return ResponseEntity.ok(claseRepository.findAll().stream().map(this::claseToMap).toList());
     }
 
@@ -82,7 +88,8 @@ public class BookingController {
 
     @PostMapping("/api/reservas")
     public ResponseEntity<Map<String, Object>> reservar(@Valid @RequestBody ReservaRequest req) {
-        Reserva reserva = reservarClaseUseCase.execute(req.getSocioId(), req.getClaseId());
+        ClaseCommand command = new ClaseCommand(req.getSocioId(), req.getClaseId());
+        Reserva reserva = reservarClaseUseCase.execute(command);
         return ResponseEntity.status(HttpStatus.CREATED).body(reservaToMap(reserva));
     }
 
@@ -95,7 +102,11 @@ public class BookingController {
     @PostMapping("/api/reservas/inasistencia")
     public ResponseEntity<Map<String, Object>> registrarInasistencia(
             @RequestParam String socioId, @RequestParam String claseId) {
-        boolean suspendido = registrarInasistenciaUseCase.execute(socioId, claseId);
+        if (socioId.isBlank() || claseId.isBlank()) {
+            throw new IllegalArgumentException("socioId y claseId son obligatorios");
+        }
+        ClaseCommand command = new ClaseCommand(socioId, claseId);
+        boolean suspendido = registrarInasistenciaUseCase.execute(command);
         return ResponseEntity.ok(Map.of(
                 "status", "InasistenciaRegistrada",
                 "socioId", socioId,
@@ -120,6 +131,22 @@ public class BookingController {
     }
 
     // ── Helpers ─────────────────────────────────────────────────────
+
+    private Horario.Turno parseTurno(String turnoRaw) {
+        if (turnoRaw == null) {
+            throw new IllegalArgumentException("El turno es obligatorio");
+        }
+
+        String normalized = Normalizer.normalize(turnoRaw.trim(), Normalizer.Form.NFD)
+                .replaceAll("\\p{M}+", "")
+                .toUpperCase(Locale.ROOT);
+
+        return switch (normalized) {
+            case "MANANA" -> Horario.Turno.MANANA;
+            case "TARDE" -> Horario.Turno.TARDE;
+            default -> throw new IllegalArgumentException("Turno inválido. Use MANANA o TARDE");
+        };
+    }
 
     private Map<String, Object> claseToMap(ClaseGrupal c) {
         return Map.of(

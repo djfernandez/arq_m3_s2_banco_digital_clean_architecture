@@ -3,6 +3,7 @@ package com.gimnasio.booking.application.usecase;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gimnasio.booking.application.dto.ClaseCommand;
 import com.gimnasio.membership.domain.exception.SocioNotFoundException;
 import com.gimnasio.membership.domain.model.Socio;
 import com.gimnasio.membership.domain.repository.SocioRepository;
@@ -32,7 +33,9 @@ public class RegistrarInasistenciaUseCase {
     private final NotificationPort notificationPort;
 
     @Transactional
-    public boolean execute(String socioId, String claseId) {
+    public boolean execute(ClaseCommand command) {
+        String socioId = command.getSocioId();
+        String claseId = command.getClaseId();
         log.info("Registrando No-Show — socio:{} clase:{}", socioId, claseId);
 
         Socio socio = socioRepository.findById(socioId)

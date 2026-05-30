@@ -1,13 +1,12 @@
 package com.gimnasio.banco.infrastructure.persistence.mapper;
 
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import com.gimnasio.banco.domain.model.AccountStatus;
 import com.gimnasio.banco.domain.model.BankAccount;
 import com.gimnasio.banco.domain.model.Money;
 import com.gimnasio.banco.infrastructure.persistence.entity.AccountEntity;
-
-import java.math.BigDecimal;
 
 /**
  * MAPPER: Convierte entre BankAccount (domain) y AccountEntity (JPA)

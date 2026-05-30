@@ -7,7 +7,7 @@ import com.gimnasio.banco.application.usecase.TransferMoneyUseCase;
 /**
  * ADAPTER: Implementa NotificationPort usando consola
  */
-@Component
+@Component("bankTransferNotificationAdapter")
 public class ConsoleNotificationAdapter implements TransferMoneyUseCase.NotificationPort {
 
     @Override

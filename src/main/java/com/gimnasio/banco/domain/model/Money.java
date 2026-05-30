@@ -1,9 +1,9 @@
 package com.gimnasio.banco.domain.model;
 
+import java.math.BigDecimal;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-
-import java.math.BigDecimal;
 
 /**
  * VALUE OBJECT: Money
